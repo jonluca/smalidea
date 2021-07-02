@@ -4,3 +4,7 @@ test-system
 
 # Ignore Gradle project-specific cache directory
 .gradle
+
+# Ignore idea generated project file
+smalidea.iml
+.idea

@@ -32,10 +32,20 @@
 package org.jf.smalidea.psi.stub.element;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiNameHelper;
+import com.intellij.psi.PsiReferenceList;
+import com.intellij.psi.impl.java.stubs.PsiClassStub;
+import com.intellij.psi.impl.java.stubs.index.JavaStubIndexKeys;
+import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.annotations.NotNull;
 import org.jf.smalidea.psi.impl.SmaliExtendsList;
+import org.jf.smalidea.psi.index.SmaliClassNameIndex;
+import org.jf.smalidea.psi.index.SmaliStubIndexKeys;
+import org.jf.smalidea.psi.stub.SmaliClassStub;
 import org.jf.smalidea.psi.stub.SmaliExtendsListStub;
+import org.jf.smalidea.util.NameUtils;
 
 public class SmaliExtendsListElementType extends SmaliBaseReferenceListElementType<SmaliExtendsListStub, SmaliExtendsList> {
     public static final SmaliExtendsListElementType  INSTANCE = new SmaliExtendsListElementType ();
@@ -62,5 +72,22 @@ public class SmaliExtendsListElementType extends SmaliBaseReferenceListElementTy
 
     @Override public SmaliExtendsListStub createStub(@NotNull SmaliExtendsList psi, StubElement parentStub) {
         return new SmaliExtendsListStub(parentStub, psi.getSmaliNames());
+    }
+
+    @Override
+    public void indexStub(@NotNull SmaliExtendsListStub stub, @NotNull IndexSink sink) {
+        String[] names = stub.getSmaliTypeNames();
+
+        for (String qualifiedName : names) {
+            if(qualifiedName != null){
+                String javaQualityName = NameUtils.smaliToJavaType(qualifiedName);
+
+                String shortName = PsiNameHelper.getShortClassName(javaQualityName);
+
+                if (!StringUtil.isEmptyOrSpaces(shortName)) {
+                    sink.occurrence(SmaliStubIndexKeys.SUPER_CLASSES, shortName);
+                }
+            }
+        }
     }
 }

@@ -31,6 +31,7 @@
 
 package org.jf.smalidea.findUsages;
 
+import com.intellij.codeInsight.TargetElementUtil;
 import com.intellij.codeInsight.TargetElementUtilBase;
 import com.intellij.find.findUsages.PsiElement2UsageTargetAdapter;
 import com.intellij.lang.ASTNode;
@@ -51,8 +52,8 @@ import org.jf.smalidea.psi.impl.SmaliMemberName;
  */
 public class SmaliUsageTargetProvider implements UsageTargetProvider {
     @Nullable @Override public UsageTarget[] getTargets(Editor editor, PsiFile file) {
-        PsiElement element = file.findElementAt(
-                TargetElementUtilBase.adjustOffset(file, editor.getDocument(), editor.getCaretModel().getOffset()));
+        int adjustedOffset = TargetElementUtil.adjustOffset(file, editor.getDocument(), editor.getCaretModel().getOffset());
+        PsiElement element = file.findElementAt(adjustedOffset);
         if (element == null) {
             return null;
         }

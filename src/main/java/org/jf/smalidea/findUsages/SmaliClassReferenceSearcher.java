@@ -49,24 +49,26 @@ import org.jetbrains.annotations.NotNull;
 import org.jf.smalidea.util.NameUtils;
 
 public class SmaliClassReferenceSearcher extends QueryExecutorBase<PsiReference, ReferencesSearch.SearchParameters> {
-    @Override public void processQuery(
-            final SearchParameters queryParameters,
-            final Processor<? super PsiReference> consumer) {
+
+    @Override
+    public void processQuery(@NotNull final SearchParameters queryParameters, @NotNull final Processor<? super PsiReference> consumer) {
+
         final PsiElement element = queryParameters.getElementToSearch();
         if (!(element instanceof PsiClass)) {
             return;
         }
 
-        String smaliType = ApplicationManager.getApplication().runReadAction(
-                new Computable<String>() {
-                    @Override public String compute() {
-                        String qualifiedName = ((PsiClass)element).getQualifiedName();
-                        if (qualifiedName != null) {
-                            return NameUtils.javaToSmaliType((PsiClass)element);
-                        }
-                        return null;
-                    }
-                });
+        String smaliType = ApplicationManager.getApplication().runReadAction(new Computable<String>() {
+            @Override
+            public String compute() {
+                String qualifiedName = ((PsiClass) element).getQualifiedName();
+                if (qualifiedName != null) {
+                    return NameUtils.javaToSmaliType((PsiClass) element);
+                }
+                return null;
+            }
+        });
+
         if (smaliType == null) {
             return;
         }
@@ -75,47 +77,42 @@ public class SmaliClassReferenceSearcher extends QueryExecutorBase<PsiReference,
 
         final SingleTargetRequestResultProcessor processor = new SingleTargetRequestResultProcessor(element);
 
-        SearchScope querySearchScope = ApplicationManager.getApplication().runReadAction(
-                new Computable<SearchScope>() {
-                    @Override public SearchScope compute() {
-                        return queryParameters.getEffectiveSearchScope();
-                    }
-                });
+        SearchScope querySearchScope = ApplicationManager.getApplication().runReadAction(new Computable<SearchScope>() {
+            @Override
+            public SearchScope compute() {
+                return queryParameters.getEffectiveSearchScope();
+            }
+        });
 
         if (querySearchScope instanceof LocalSearchScope) {
-            for (final PsiElement scopeElement : ((LocalSearchScope)querySearchScope).getScope()) {
+            for (final PsiElement scopeElement : ((LocalSearchScope) querySearchScope).getScope()) {
                 ApplicationManager.getApplication().runReadAction(new Runnable() {
                     @Override
                     public void run() {
-                        LowLevelSearchUtil.processElementsContainingWordInElement(
-                                new TextOccurenceProcessor() {
-                                    @Override public boolean execute(
-                                            @NotNull PsiElement element, int offsetInElement) {
-                                        return processor.processTextOccurrence(element, offsetInElement, consumer);
-                                    }
-                                },
-                                scopeElement, stringSearcher, true, new EmptyProgressIndicator());
+                        LowLevelSearchUtil.processElementsContainingWordInElement(new TextOccurenceProcessor() {
+                            @Override
+                            public boolean execute(@NotNull PsiElement element, int offsetInElement) {
+                                return processor.processTextOccurrence(element, offsetInElement, consumer);
+                            }
+                        }, scopeElement, stringSearcher, true, new EmptyProgressIndicator());
                     }
                 });
             }
         } else if (querySearchScope instanceof GlobalSearchScope) {
             PsiSearchHelper helper = PsiSearchHelper.SERVICE.getInstance(element.getProject());
             // TODO: limit search scope to only smali files. See, e.g. AnnotatedPackagesSearcher.PackageInfoFilesOnly
-            helper.processAllFilesWithWord(smaliType, (GlobalSearchScope)querySearchScope,
-                    new Processor<PsiFile>() {
+            helper.processAllFilesWithWord(smaliType, (GlobalSearchScope) querySearchScope, new Processor<PsiFile>() {
+                @Override
+                public boolean process(PsiFile file) {
+                    LowLevelSearchUtil.processElementsContainingWordInElement(new TextOccurenceProcessor() {
                         @Override
-                        public boolean process(PsiFile file) {
-                            LowLevelSearchUtil.processElementsContainingWordInElement(
-                                    new TextOccurenceProcessor() {
-                                        @Override public boolean execute(
-                                                @NotNull PsiElement element, int offsetInElement) {
-                                            return processor.processTextOccurrence(element, offsetInElement, consumer);
-                                        }
-                                    },
-                                    file, stringSearcher, true, new EmptyProgressIndicator());
-                            return true;
+                        public boolean execute(@NotNull PsiElement element, int offsetInElement) {
+                            return processor.processTextOccurrence(element, offsetInElement, consumer);
                         }
-                    }, true);
+                    }, file, stringSearcher, true, new EmptyProgressIndicator());
+                    return true;
+                }
+            }, true);
         } else {
             assert false;
             return;

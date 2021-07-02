@@ -31,6 +31,7 @@
 
 package org.jf.smalidea.psi;
 
+import org.jf.smalidea.SmaliCommeter;
 import org.jf.smalidea.psi.impl.*;
 import org.jf.smalidea.psi.stub.element.*;
 
@@ -119,4 +120,7 @@ public class SmaliElementTypes {
             new SmaliCompositeElementType("SPARSE_SWITCH_ELEMENT", SmaliSparseSwitchElement.FACTORY);
     public static final SmaliCompositeElementType ARRAY_DATA_ELEMENT =
             new SmaliCompositeElementType("ARRAY_DATA_ELEMENT", SmaliArrayDataElement.FACTORY);
+
+    public static final SmaliCompositeElementType COMMENT_NAME =
+            new SmaliCompositeElementType("COMMENT_NAME", SmaliComment.FACTORY);
 }

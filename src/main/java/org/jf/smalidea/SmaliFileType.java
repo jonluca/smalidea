@@ -31,7 +31,9 @@
 
 package org.jf.smalidea;
 
+import com.intellij.debugger.engine.JavaDebugAware;
 import com.intellij.openapi.fileTypes.LanguageFileType;
+import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;

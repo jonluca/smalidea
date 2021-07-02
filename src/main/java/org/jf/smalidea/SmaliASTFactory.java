@@ -32,18 +32,25 @@
 package org.jf.smalidea;
 
 import com.intellij.lang.ASTFactory;
+import com.intellij.lang.DefaultASTFactory;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.psi.impl.source.tree.LeafElement;
 import com.intellij.psi.tree.IElementType;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jf.smalidea.psi.impl.SmaliComment;
 import org.jf.smalidea.psi.leaf.SmaliClassDescriptor;
 
 public class SmaliASTFactory extends ASTFactory {
+    private final DefaultASTFactory myDefaultASTFactory = ServiceManager.getService(DefaultASTFactory.class);
 
     @Nullable
     @Override
-    public LeafElement createLeaf(IElementType type, CharSequence text) {
+    public LeafElement createLeaf(@NotNull IElementType type, @NotNull CharSequence text) {
         if (type == SmaliTokens.CLASS_DESCRIPTOR) {
             return new SmaliClassDescriptor(text);
+        }else if(type == SmaliTokens.LINE_COMMENT){
+           return myDefaultASTFactory.createComment(type,text);
         }
         return super.createLeaf(type, text);
     }

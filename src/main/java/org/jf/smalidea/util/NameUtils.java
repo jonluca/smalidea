@@ -31,6 +31,8 @@
 
 package org.jf.smalidea.util;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableMap;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
@@ -43,6 +45,16 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 
 public class NameUtils {
+
+    private static final Cache<String, String> javaQualityNameShortNameMapping = CacheBuilder.newBuilder()
+            .maximumSize(5000)
+            .build();
+
+    private static final Cache<String, String> smaliNameJavaNameMapping = CacheBuilder.newBuilder()
+            .maximumSize(5000)
+            .build();
+
+
     private static final Map<String, String> javaToSmaliPrimitiveTypes = ImmutableMap.<String, String>builder()
             .put("boolean", "Z")
             .put("byte", "B")
@@ -54,10 +66,37 @@ public class NameUtils {
             .put("double", "D")
             .build();
 
+
+    public static boolean isPrimitiveType(String smaliType) {
+        if (smaliType.length() == 1) {
+            char firstChar = smaliType.charAt(0);
+            switch (firstChar) {
+                case 'Z':
+                case 'B':
+                case 'C':
+                case 'S':
+                case 'I':
+                case 'J':
+                case 'F':
+                case 'D':
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean isVoidJavaType(String javaType) {
+        return javaType != null && "void".equals(javaType);
+    }
+
+    public static boolean isVoidSmaliType(String smaliType) {
+        return smaliType != null && "V".equals(smaliType);
+    }
+
     @NotNull
     public static String javaToSmaliType(@NotNull PsiType psiType) {
         if (psiType instanceof PsiClassType) {
-            PsiClass psiClass = ((PsiClassType)psiType).resolve();
+            PsiClass psiClass = ((PsiClassType) psiType).resolve();
             if (psiClass != null) {
                 return javaToSmaliType(psiClass);
             }
@@ -76,7 +115,7 @@ public class NameUtils {
             int offset = qualifiedName.lastIndexOf('.');
             String parentName = qualifiedName.substring(0, offset);
             assert parentName.equals(parent.getQualifiedName());
-            String className = qualifiedName.substring(offset+1, qualifiedName.length());
+            String className = qualifiedName.substring(offset + 1, qualifiedName.length());
             assert className.equals(psiClass.getName());
             return javaToSmaliType(parentName + '$' + className);
         } else {
@@ -86,10 +125,10 @@ public class NameUtils {
 
     @NotNull
     public static String javaToSmaliType(@NotNull String javaType) {
-        if (javaType.charAt(javaType.length()-1) == ']') {
+        if (javaType.charAt(javaType.length() - 1) == ']') {
             int dimensions = 0;
             int firstArrayChar = -1;
-            for (int i=0; i<javaType.length(); i++) {
+            for (int i = 0; i < javaType.length(); i++) {
                 if (javaType.charAt(i) == '[') {
                     if (firstArrayChar == -1) {
                         firstArrayChar = i;
@@ -99,7 +138,7 @@ public class NameUtils {
             }
             if (dimensions > 0) {
                 StringBuilder sb = new StringBuilder(firstArrayChar + 2 + dimensions);
-                for (int i=0; i<dimensions; i++) {
+                for (int i = 0; i < dimensions; i++) {
                     sb.append('[');
                 }
                 convertSimpleJavaToSmaliType(javaType.substring(0, firstArrayChar), sb);
@@ -116,7 +155,7 @@ public class NameUtils {
             dest.append(smaliType);
         } else {
             dest.append('L');
-            for (int i=0; i<javaType.length(); i++) {
+            for (int i = 0; i < javaType.length(); i++) {
                 char c = javaType.charAt(i);
                 if (c == '.') {
                     dest.append('/');
@@ -148,21 +187,21 @@ public class NameUtils {
             offset = 0;
         }
         // find the first $ after the last .
-        offset = javaType.indexOf('$', offset+1);
+        offset = javaType.indexOf('$', offset + 1);
         if (offset < 0) {
             return null;
         }
 
-        while (offset > 0 && offset < javaType.length()-1) {
+        while (offset > 0 && offset < javaType.length() - 1) {
             String left = javaType.substring(0, offset);
             psiClass = facade.findClass(left, scope);
             if (psiClass != null) {
-                psiClass = findInnerClass(psiClass, javaType.substring(offset+1, javaType.length()), facade, scope);
+                psiClass = findInnerClass(psiClass, javaType.substring(offset + 1, javaType.length()), facade, scope);
                 if (psiClass != null) {
                     return psiClass;
                 }
             }
-            offset = javaType.indexOf('$', offset+1);
+            offset = javaType.indexOf('$', offset + 1);
         }
         return null;
     }
@@ -187,7 +226,7 @@ public class NameUtils {
             PsiClass psiClass = facade.findClass(nextInner, scope);
             if (psiClass != null) {
                 if (offset < innerText.length()) {
-                    psiClass = findInnerClass(psiClass, innerText.substring(offset+1, innerText.length()), facade,
+                    psiClass = findInnerClass(psiClass, innerText.substring(offset + 1, innerText.length()), facade,
                             scope);
                     if (psiClass != null) {
                         return psiClass;
@@ -199,7 +238,7 @@ public class NameUtils {
             if (offset >= innerText.length()) {
                 break;
             }
-            offset = innerText.indexOf('$', offset+1);
+            offset = innerText.indexOf('$', offset + 1);
             if (offset < 0) {
                 offset = innerText.length();
             }
@@ -216,13 +255,21 @@ public class NameUtils {
 
     @NotNull
     public static String smaliToJavaType(@NotNull String smaliType) {
-        if (smaliType.charAt(0) == '[') {
-            return convertSmaliArrayToJava(smaliType);
-        } else {
-            StringBuilder sb = new StringBuilder(smaliType.length());
-            convertAndAppendNonArraySmaliTypeToJava(smaliType, sb);
-            return sb.toString();
+        String javaType = smaliNameJavaNameMapping.getIfPresent(smaliType);
+
+        if (javaType == null) {
+            if (smaliType.charAt(0) == '[') {
+                javaType = convertSmaliArrayToJava(smaliType);
+            } else {
+                StringBuilder sb = new StringBuilder(smaliType.length());
+                convertAndAppendNonArraySmaliTypeToJava(smaliType, sb);
+                javaType = sb.toString();
+            }
+
+            smaliNameJavaNameMapping.put(smaliType, javaType);
         }
+
+        return javaType;
     }
 
     @NotNull
@@ -262,14 +309,14 @@ public class NameUtils {
 
     @NotNull
     private static String convertSmaliArrayToJava(@NotNull String smaliType) {
-        int dimensions=0;
+        int dimensions = 0;
         while (smaliType.charAt(dimensions) == '[') {
             dimensions++;
         }
 
         StringBuilder sb = new StringBuilder(smaliType.length() + dimensions);
         convertAndAppendNonArraySmaliTypeToJava(smaliType.substring(dimensions), sb);
-        for (int i=0; i<dimensions; i++) {
+        for (int i = 0; i < dimensions; i++) {
             sb.append("[]");
         }
         return sb.toString();
@@ -301,7 +348,7 @@ public class NameUtils {
             case 'D':
                 dest.append("double");
             case 'L':
-                for (int i=1; i<smaliType.length()-1; i++) {
+                for (int i = 1; i < smaliType.length() - 1; i++) {
                     char c = smaliType.charAt(i);
                     if (c == '/') {
                         dest.append('.');
@@ -330,10 +377,21 @@ public class NameUtils {
             return null;
         }
 
+        final String cached = javaQualityNameShortNameMapping.getIfPresent(qualifiedName);
+
+        if (cached != null) {
+            return cached;
+        }
+
         int index = qualifiedName.lastIndexOf('.');
         if (index == -1) {
             return qualifiedName;
         }
-        return qualifiedName.substring(index+1);
+
+        final String shortName = qualifiedName.substring(index + 1);
+
+        javaQualityNameShortNameMapping.put(qualifiedName, shortName);
+
+        return shortName;
     }
 }

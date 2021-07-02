@@ -40,4 +40,5 @@ public class SmaliExtendsListStub extends SmaliBaseReferenceListStub<SmaliExtend
     public SmaliExtendsListStub(@NotNull StubElement parent, @NotNull String[] smaliTypeNames) {
         super(parent, SmaliElementTypes.EXTENDS_LIST, smaliTypeNames);
     }
+
 }

@@ -1,48 +1,149 @@
-<idea-plugin version="2">
-  <id>org.jf.smalidea</id>
-  <name>Smalidea</name>
-  <version>0.04</version>
-  <vendor email="jesusfreke@jesusfreke.com" url="http://smali.org">JesusFreke</vendor>
+<idea-plugin>
+    <id>org.jf.smalidea</id>
+    <name>Smalidea</name>
+    <version>0.02</version>
+    <vendor email="jesusfreke@jesusfreke.com" url="http://smali.org">JesusFreke</vendor>
+    <depends optional="false">com.intellij.java</depends>
 
-  <description><![CDATA[
-      A smali language plugin for IDEA
-    ]]></description>
+    <description>Smali调试器</description>
 
-  <change-notes><![CDATA[
-    ]]>
-  </change-notes>
+    <change-notes>增加部高亮 代码结构 代码跳转</change-notes>
 
-  <idea-version since-build="191.4212.41"/>
+    <idea-version since-build="143"/>
 
-  <extensions defaultExtensionNs="com.intellij">
-      <fileTypeFactory implementation="org.jf.smalidea.SmaliFileTypeFactory"/>
-      <syntaxHighlighter key="smali" factoryClass="org.jf.smalidea.highlighter.SmaliHighlighterFactory"/>
-      <lang.syntaxHighlighterFactory language="smali" implementationClass="org.jf.smalidea.highlighter.SmaliHighlighterFactory"/>
-      <colorSettingsPage implementation="org.jf.smalidea.SmaliColorsPage"/>
-      <lang.parserDefinition language="smali" implementationClass="org.jf.smalidea.SmaliParserDefinition"/>
-      <lang.ast.factory language="smali" implementationClass="org.jf.smalidea.SmaliASTFactory"/>
-      <java.elementFinder implementation="org.jf.smalidea.psi.index.SmaliClassFinder"/>
-      <stubIndex implementation="org.jf.smalidea.psi.index.SmaliClassNameIndex"/>
-      <debugger.positionManagerFactory implementation="org.jf.smalidea.debugging.SmaliPositionManagerFactory"/>
-      <debugger.jvmSteppingCommandProvider implementation="org.jf.smalidea.debugging.SmaliSteppingCommandProvider"/>
-      <debugger.codeFragmentFactory implementation="org.jf.smalidea.debugging.SmaliCodeFragmentFactory"/>
-      <stubElementTypeHolder class="org.jf.smalidea.psi.SmaliElementTypes" />
-      <lang.findUsagesProvider language="smali"
-                               implementationClass="org.jf.smalidea.findUsages.SmaliFindUsagesProvider"/>
-      <referencesSearch implementation="org.jf.smalidea.findUsages.SmaliClassReferenceSearcher"/>
-      <usageTargetProvider implementation="org.jf.smalidea.findUsages.SmaliUsageTargetProvider" />
-      <usageTypeProvider implementation="org.jf.smalidea.findUsages.SmaliUsageTypeProvider"/>
-      <errorHandler implementation="org.jf.smalidea.errorReporting.ErrorReporter"/>
-      <todoIndexer filetype="smali" implementationClass="org.jf.smalidea.highlighter.SmaliTodoIndexer"/>
-  </extensions>
+    <extensions defaultExtensionNs="com.intellij">
 
-  <application-components>
-  </application-components>
+        <applicationService serviceInterface="org.jf.smalidea.codeInsight.folding.SmaliCodeFoldingSettings"
+                            serviceImplementation="org.jf.smalidea.codeInsight.folding.impl.SmaliCodeFoldingSettingsImpl"/>
 
-  <project-components>
-  </project-components>
+        <constantExpressionEvaluator language="smali"
+                                     implementationClass="org.jf.smalidea.psi.impl.SmaliPsiExpressionEvaluator"/>
 
-  <actions>
-  </actions>
+        <fileTypeFactory implementation="org.jf.smalidea.SmaliFileTypeFactory"/>
+        <fileType implementationClass="org.jf.smalidea.SmaliFileType" language="smali" extensions="smali"/>
+
+        <syntaxHighlighter key="smali" implementationClass="org.jf.smalidea.SmaliHighlighter"/>
+
+        <colorSettingsPage implementation="org.jf.smalidea.SmaliColorsPage"/>
+
+        <lang.parserDefinition language="smali" implementationClass="org.jf.smalidea.SmaliParserDefinition"/>
+
+        <lang.ast.factory language="smali" implementationClass="org.jf.smalidea.SmaliASTFactory"/>
+
+        <java.elementFinder implementation="org.jf.smalidea.psi.index.SmaliClassFinder"/>
+
+        <lang.commenter language="smali" implementationClass="org.jf.smalidea.SmaliCommeter"/>
+
+        <stubIndex implementation="org.jf.smalidea.psi.index.SmaliClassNameIndex"/>
+        <stubIndex implementation="org.jf.smalidea.psi.index.SmaliSuperClassNameIndex"/>
+        <stubIndex implementation="org.jf.smalidea.psi.index.SmaliFullClassNameIndex"/>
+
+        <codeInsight.lineMarkerProvider language="smali" implementationClass="org.jf.smalidea.codeInsight.daemon.impl.SmaliLineMarkerProvider"/>
+        <codeInsight.lineMarkerProvider language="smali" implementationClass="com.intellij.codeInsight.daemon.impl.RecursiveCallLineMarkerProvider"/>
+        <codeInsight.lineMarkerProvider language="smali" implementationClass="com.intellij.codeInsight.ExternalAnnotationLineMarkerProvider"/>
+        <codeInsight.lineMarkerProvider language="smali" implementationClass="com.intellij.codeInsight.InferredAnnotationsLineMarkerProvider"/>
+
+        <lang.foldingBuilder language="smali" implementationClass="org.jf.smalidea.codeInsight.folding.impl.SmaliFoldingBuilder"/>
+
+        <debugger.positionManagerFactory implementation="org.jf.smalidea.debugging.SmaliPositionManagerFactory"/>
+
+        <debugger.jvmSteppingCommandProvider implementation="org.jf.smalidea.debugging.SmaliSteppingCommandProvider"/>
+
+        <debugger.codeFragmentFactory implementation="org.jf.smalidea.debugging.SmaliCodeFragmentFactory"/>
+
+        <debugger.javaDebugAware implementation="org.jf.smalidea.debugging.SmaliJvmDebugAware"/>
+
+        <debugger.frameExtraVarsProvider implementation="org.jf.smalidea.debugging.SmaliFrameArgumentsProvider"/>
+
+        <debugger.frameExtraVarsProvider implementation="org.jf.smalidea.debugging.SmaliFrameLocalVariableProvider"/>
+
+
+        <stubElementTypeHolder class="org.jf.smalidea.psi.SmaliElementTypes"/>
+
+        <lang.findUsagesProvider language="smali"
+                                 implementationClass="org.jf.smalidea.findUsages.SmaliFindUsagesProvider"/>
+
+        <referencesSearch implementation="org.jf.smalidea.findUsages.SmaliClassReferenceSearcher"/>
+
+        <usageTargetProvider implementation="org.jf.smalidea.findUsages.SmaliUsageTargetProvider"/>
+
+        <usageTypeProvider implementation="org.jf.smalidea.findUsages.SmaliUsageTypeProvider"/>
+
+        <targetElementUtilExtender implementation="org.jf.smalidea.codeInsight.SmaliTargetElementEvaluator"/>
+        <targetElementEvaluator language="smali"
+                                implementationClass="org.jf.smalidea.codeInsight.SmaliTargetElementEvaluator"/>
+
+        <errorHandler implementation="org.jf.smalidea.errorReporting.ErrorReporter"/>
+
+        <lang.psiStructureViewFactory language="smali"
+                                      implementationClass="org.jf.smalidea.structureView.SmaliStructureViewBuilderFactory"/>
+
+        <lang.documentationProvider language="smali"
+
+                                    implementationClass="org.jf.smalidea.documentProvider.SmaliDocumentationProvider"/>
+        <typedHandler implementation="org.jf.smalidea.codeInsight.editorActions.SmaliTypedHandler" id="smali"/>
+
+
+        <psi.referenceContributor language="smali"
+                                  implementation="org.jf.smalidea.codeInsight.completion.SimpleReferenceContributor"/>
+
+        <completion.contributor language="smali"
+                                implementationClass="org.jf.smalidea.codeInsight.completion.SmaliCompletionContributor"/>
+
+        <completion.contributor language="smali"
+                                implementationClass="org.jf.smalidea.codeInsight.completion.SmaliClassNameCompletionContributor"/>
+
+        <!--smali方法实现搜索器-->
+        <definitionsScopedSearch implementation="org.jf.smalidea.navigation.SmaliMethodImplementationsSearch"/>
+
+        <!--smali类实现搜索器-->
+        <definitionsScopedSearch implementation="org.jf.smalidea.navigation.SmaliClassImplementationsSearch"/>
+
+        <directClassInheritorsSearch implementation="org.jf.smalidea.navigation.SmaliDirectClassImplementationsSearch"/>
+
+        <!--主要用于缓存SubClass-->
+        <projectService serviceImplementation="org.jf.smalidea.psi.impl.search.SmaliHighlightingCaches"/>
+
+
+        <completion.contributor language="smali"
+                                implementationClass="org.jf.smalidea.codeInsight.completion.SmaliCompletionContributor"/>
+        <completion.contributor language="smali"
+                                implementationClass="org.jf.smalidea.codeInsight.completion.SmaliClassNameCompletionContributor"/>
+
+        <intentionAction>
+            <className>org.jf.smalidea.codeInsight.daemon.impl.quickfix.integer.ConvertIntegerToHexIntention</className>
+            <category>Smali/Numberic</category>
+        </intentionAction>
+
+        <intentionAction>
+            <className>org.jf.smalidea.codeInsight.daemon.impl.quickfix.integer.ConvertIntegerToDecimalIntention</className>
+            <category>Smali/Numberic</category>
+        </intentionAction>
+
+        <intentionAction>
+        <className>org.jf.smalidea.codeInsight.daemon.impl.quickfix.ConvertToStringLiteralAction</className>
+        <category>Smali/Strings</category>
+        </intentionAction>
+
+
+        <intentionAction>
+            <className>org.jf.smalidea.codeInsight.daemon.impl.quickfix.unicode.ReplaceOctalEscapeWithUnicodeEscapeIntention</className>
+            <category>Smali/I18N</category>
+        </intentionAction>
+
+        <intentionAction>
+            <className>org.jf.smalidea.codeInsight.daemon.impl.quickfix.unicode.UnicodeUnescapeIntention</className>
+            <category>Smali/I18N</category>
+        </intentionAction>
+
+        <intentionAction>
+            <className>org.jf.smalidea.codeInsight.intention.ConvertToBasicLatinAction</className>
+            <category>Smali/I18N</category>
+        </intentionAction>
+    </extensions>
+
+    <actions>
+
+    </actions>
 
 </idea-plugin>

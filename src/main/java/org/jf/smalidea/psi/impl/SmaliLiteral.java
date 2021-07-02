@@ -38,6 +38,7 @@ import org.jf.smali.LiteralTools;
 import org.jf.smalidea.SmaliTokens;
 import org.jf.smalidea.psi.SmaliCompositeElementFactory;
 import org.jf.smalidea.psi.SmaliElementTypes;
+import org.jf.smalidea.util.StringUtils;
 
 public class SmaliLiteral extends SmaliCompositeElement implements PsiAnnotationMemberValue {
     public static final SmaliCompositeElementFactory FACTORY = new SmaliCompositeElementFactory() {
@@ -71,5 +72,25 @@ public class SmaliLiteral extends SmaliCompositeElement implements PsiAnnotation
         } else {
             throw new RuntimeException("Not an integral literal");
         }
+    }
+
+
+
+    public Object getValue() {
+
+        try {
+            ASTNode literalNode = getNode().getFirstChildNode();
+            IElementType literalType = literalNode.getElementType();
+
+            if (literalType == SmaliTokens.STRING_LITERAL) {
+                return StringUtils.parseString(literalNode.getText(), false);
+            } else if (literalType == SmaliTokens.BOOL_LITERAL) {
+                return Boolean.valueOf(literalNode.getText());
+            }
+            return getIntegralValue();
+        } catch (Exception e) {
+            throw new RuntimeException("Not an integral literal");
+        }
+
     }
 }

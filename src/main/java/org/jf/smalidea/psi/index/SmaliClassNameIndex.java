@@ -37,15 +37,22 @@ import org.jetbrains.annotations.NotNull;
 import org.jf.smalidea.psi.impl.SmaliClass;
 
 public class SmaliClassNameIndex extends StringStubIndexExtension<SmaliClass> {
-    public static final StubIndexKey<String, SmaliClass> KEY =
-            StubIndexKey.createIndexKey("smali.class.name");
+
+    public static final StubIndexKey<String, SmaliClass> KEY = SmaliStubIndexKeys.CLASS;
 
     public static final SmaliClassNameIndex INSTANCE = new SmaliClassNameIndex();
 
     private SmaliClassNameIndex() {
     }
 
-    @NotNull @Override public StubIndexKey<String, SmaliClass> getKey() {
+
+    public static SmaliClassNameIndex getInstance() {
+        return INSTANCE;
+    }
+
+    @NotNull
+    @Override
+    public StubIndexKey<String, SmaliClass> getKey() {
         return KEY;
     }
 }

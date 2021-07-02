@@ -33,10 +33,7 @@ package org.jf.smalidea.psi.impl;
 
 import com.google.common.collect.Lists;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.PsiType;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.light.LightMethodBuilder;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
@@ -52,12 +49,14 @@ import java.util.List;
 
 public class SmaliMethodReference extends SmaliCompositeElement implements PsiReference {
     public static final SmaliCompositeElementFactory FACTORY = new SmaliCompositeElementFactory() {
-        @Override public SmaliCompositeElement createElement() {
+        @Override
+        public SmaliCompositeElement createElement() {
             return new SmaliMethodReference();
         }
     };
 
-    @Override public String getName() {
+    @Override
+    public String getName() {
         PsiElement memberName = getMemberName();
         if (memberName == null) {
             return null;
@@ -69,15 +68,20 @@ public class SmaliMethodReference extends SmaliCompositeElement implements PsiRe
         super(SmaliElementTypes.METHOD_REFERENCE);
     }
 
-    @Override public PsiReference getReference() {
+    @Override
+    public PsiReference getReference() {
         return this;
     }
 
-    @Override public PsiElement getElement() {
+    @NotNull
+    @Override
+    public PsiElement getElement() {
         return this;
     }
 
-    @Override public TextRange getRangeInElement() {
+    @NotNull
+    @Override
+    public TextRange getRangeInElement() {
         return new TextRange(0, getTextLength());
     }
 
@@ -115,7 +119,7 @@ public class SmaliMethodReference extends SmaliCompositeElement implements PsiRe
         SmaliTypeElement[] parameterElements = paramList.getParameterTypes();
 
         List<PsiType> types = new ArrayList<PsiType>(parameterElements.length);
-        for (SmaliTypeElement parameterElement: parameterElements) {
+        for (SmaliTypeElement parameterElement : parameterElements) {
             types.add(parameterElement.getType());
         }
         return types;
@@ -130,7 +134,9 @@ public class SmaliMethodReference extends SmaliCompositeElement implements PsiRe
         return types[1];
     }
 
-    @Nullable @Override public PsiElement resolve() {
+    @Nullable
+    @Override
+    public PsiMethod resolve() {
         PsiClass containingClass = getContainingClass();
         if (containingClass == null) {
             return null;
@@ -143,7 +149,7 @@ public class SmaliMethodReference extends SmaliCompositeElement implements PsiRe
 
         LightMethodBuilder pattern = new LightMethodBuilder(getManager(), SmaliLanguage.INSTANCE, memberName.getText());
 
-        for (PsiType type: getParameterTypes()) {
+        for (PsiType type : getParameterTypes()) {
             pattern.addParameter("", type);
         }
 
@@ -157,26 +163,47 @@ public class SmaliMethodReference extends SmaliCompositeElement implements PsiRe
         // TODO: what about static constructor?
         pattern.setConstructor(memberName.getText().equals("<init>"));
 
-        return containingClass.findMethodBySignature(pattern, true);
+        PsiMethod method = containingClass.findMethodBySignature(pattern, true);
+
+        if(method == null && pattern.isConstructor()){
+            final String classSimpleName = containingClass.getName();
+            if(classSimpleName != null && classSimpleName.length() > 0){
+
+                pattern = new LightMethodBuilder(getManager(), SmaliLanguage.INSTANCE, classSimpleName,
+                        pattern.getParameterList(), pattern.getModifierList())
+                        .setConstructor(true);
+
+                method = containingClass.findMethodBySignature(pattern, true);
+            }
+        }
+
+        return method;
     }
 
-    @NotNull @Override public String getCanonicalText() {
+    @NotNull
+    @Override
+    public String getCanonicalText() {
         return getText();
     }
 
-    @Override public boolean isReferenceTo(PsiElement element) {
+    @Override
+    public boolean isReferenceTo(PsiElement element) {
         return resolve() == element;
     }
 
-    @NotNull @Override public Object[] getVariants() {
+    @NotNull
+    @Override
+    public Object[] getVariants() {
         return ArrayUtil.EMPTY_OBJECT_ARRAY;
     }
 
-    @Override public boolean isSoft() {
+    @Override
+    public boolean isSoft() {
         return false;
     }
 
-    @Override public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
+    @Override
+    public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
         SmaliMemberName memberName = getMemberName();
         if (memberName == null) {
             throw new IncorrectOperationException();
@@ -185,7 +212,8 @@ public class SmaliMethodReference extends SmaliCompositeElement implements PsiRe
         return this;
     }
 
-    @Override public PsiElement bindToElement(@NotNull PsiElement element) throws IncorrectOperationException {
+    @Override
+    public PsiElement bindToElement(@NotNull PsiElement element) throws IncorrectOperationException {
         //TODO: implement this
         throw new IncorrectOperationException();
     }

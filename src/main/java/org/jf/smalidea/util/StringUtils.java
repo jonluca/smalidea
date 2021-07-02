@@ -62,4 +62,16 @@ public class StringUtils {
         String text = token.getText();
         return text.substring(1, text.length()-1);
     }
+
+
+    public static String parseString(String text, boolean deleteQuote) {
+        return text == null ? null : deleteQuote ? deleteQuote(text) : text;
+    }
+
+    public static String deleteQuote(String text) {
+        if (text.length() >= 2 && text.startsWith("\"") && text.endsWith("\"")) {
+            return text.substring(1, text.length() - 1);
+        }
+        return text;
+    }
 }

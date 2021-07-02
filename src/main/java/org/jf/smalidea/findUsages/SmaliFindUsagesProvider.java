@@ -39,6 +39,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class SmaliFindUsagesProvider extends JavaFindUsagesProvider {
+
     @Override public boolean canFindUsagesFor(@NotNull PsiElement element) {
         return element instanceof PsiClass;
     }
@@ -46,6 +47,4 @@ public class SmaliFindUsagesProvider extends JavaFindUsagesProvider {
     @Nullable @Override public WordsScanner getWordsScanner() {
         return new SmaliWordScanner();
     }
-
-
 }

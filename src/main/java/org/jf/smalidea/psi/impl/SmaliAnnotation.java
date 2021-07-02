@@ -50,14 +50,18 @@ public class SmaliAnnotation extends SmaliStubBasedPsiElement<SmaliAnnotationStu
         super(node);
     }
 
-    @NotNull @Override public SmaliAnnotationParameterList getParameterList() {
+    @NotNull
+    @Override
+    public SmaliAnnotationParameterList getParameterList() {
         SmaliAnnotationParameterList paramList = findChildByClass(SmaliAnnotationParameterList.class);
         // The structure of the parser should ensure the param list is always present, even if there are syntax errors
         assert paramList != null;
         return paramList;
     }
 
-    @Nullable @Override public String getQualifiedName() {
+    @Nullable
+    @Override
+    public String getQualifiedName() {
         PsiJavaCodeReferenceElement nameElement = getNameReferenceElement();
         if (nameElement != null) {
             return nameElement.getQualifiedName();
@@ -65,7 +69,8 @@ public class SmaliAnnotation extends SmaliStubBasedPsiElement<SmaliAnnotationStu
         return null;
     }
 
-    @Nullable public String getSmaliName() {
+    @Nullable
+    public String getSmaliName() {
         SmaliAnnotationStub stub = getStub();
         if (stub != null) {
             return stub.getAnnotationSmaliTypeName();
@@ -78,7 +83,9 @@ public class SmaliAnnotation extends SmaliStubBasedPsiElement<SmaliAnnotationStu
         return classType.getSmaliName();
     }
 
-    @Nullable @Override public PsiJavaCodeReferenceElement getNameReferenceElement() {
+    @Nullable
+    @Override
+    public PsiJavaCodeReferenceElement getNameReferenceElement() {
         SmaliAnnotationStub stub = getStub();
         if (stub != null) {
             String smaliName = stub.getAnnotationSmaliTypeName();
@@ -89,11 +96,14 @@ public class SmaliAnnotation extends SmaliStubBasedPsiElement<SmaliAnnotationStu
         return findChildByClass(SmaliClassTypeElement.class);
     }
 
-    @Nullable @Override public PsiAnnotationMemberValue findAttributeValue(@Nullable @NonNls String attributeName) {
+    @Nullable
+    @Override
+    public PsiAnnotationMemberValue findAttributeValue(@Nullable @NonNls String attributeName) {
         return PsiImplUtil.findAttributeValue(this, attributeName);
     }
 
-    @Nullable @Override
+    @Nullable
+    @Override
     public PsiAnnotationMemberValue findDeclaredAttributeValue(@Nullable @NonNls String attributeName) {
         return PsiImplUtil.findDeclaredAttributeValue(this, attributeName);
     }
@@ -105,12 +115,10 @@ public class SmaliAnnotation extends SmaliStubBasedPsiElement<SmaliAnnotationStu
         throw new UnsupportedOperationException();
     }
 
-    @Nullable @Override public PsiAnnotationOwner getOwner() {
-        return (PsiAnnotationOwner)getParentByStub();
+    @Nullable
+    @Override
+    public PsiAnnotationOwner getOwner() {
+        return (PsiAnnotationOwner) getParentByStub();
     }
 
-    @Nullable @Override public PsiMetaData getMetaData() {
-        // I have no idea what this is
-        return null;
-    }
 }

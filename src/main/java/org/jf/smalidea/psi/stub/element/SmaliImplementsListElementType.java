@@ -32,10 +32,21 @@
 package org.jf.smalidea.psi.stub.element;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiNameHelper;
+import com.intellij.psi.PsiReferenceList;
+import com.intellij.psi.impl.java.stubs.JavaStubElementTypes;
+import com.intellij.psi.impl.java.stubs.PsiClassReferenceListStub;
+import com.intellij.psi.impl.java.stubs.PsiClassStub;
+import com.intellij.psi.impl.java.stubs.index.JavaStubIndexKeys;
+import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
+import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jf.smalidea.psi.impl.SmaliImplementsList;
+import org.jf.smalidea.psi.index.SmaliClassNameIndex;
 import org.jf.smalidea.psi.stub.SmaliImplementsListStub;
+import org.jf.smalidea.util.NameUtils;
 
 public class SmaliImplementsListElementType
         extends SmaliBaseReferenceListElementType<SmaliImplementsListStub, SmaliImplementsList> {
@@ -45,23 +56,47 @@ public class SmaliImplementsListElementType
         super("IMPLEMENTS_LIST");
     }
 
-    @NotNull @Override public String getExternalId() {
+    @NotNull
+    @Override
+    public String getExternalId() {
         return "smali.implements_list";
     }
 
-    @Override public SmaliImplementsList createPsi(@NotNull SmaliImplementsListStub stub) {
+    @Override
+    public SmaliImplementsList createPsi(@NotNull SmaliImplementsListStub stub) {
         return new SmaliImplementsList(stub);
     }
 
-    @Override public SmaliImplementsList createPsi(@NotNull ASTNode node) {
+    @Override
+    public SmaliImplementsList createPsi(@NotNull ASTNode node) {
         return new SmaliImplementsList(node);
     }
 
-    @Override protected SmaliImplementsListStub createStub(StubElement parentStub, String[] smaliTypeNames) {
+    @Override
+    protected SmaliImplementsListStub createStub(StubElement parentStub, String[] smaliTypeNames) {
         return new SmaliImplementsListStub(parentStub, smaliTypeNames);
     }
 
-    @Override public SmaliImplementsListStub createStub(@NotNull SmaliImplementsList psi, StubElement parentStub) {
+    @NotNull
+    @Override
+    public SmaliImplementsListStub createStub(@NotNull SmaliImplementsList psi, StubElement parentStub) {
         return new SmaliImplementsListStub(parentStub, psi.getSmaliNames());
     }
+
+    @Override
+    public void indexStub(@NotNull SmaliImplementsListStub stub, @NotNull IndexSink sink) {
+        String[] names = stub.getSmaliTypeNames();
+
+        for (String qualifiedName : names) {
+
+            String javaQualityName = NameUtils.smaliToJavaType(qualifiedName);
+            String shortName = PsiNameHelper.getShortClassName(javaQualityName);
+
+            if (!StringUtil.isEmptyOrSpaces(shortName)) {
+                sink.occurrence(JavaStubIndexKeys.SUPER_CLASSES, shortName);
+            }
+        }
+    }
+
+
 }

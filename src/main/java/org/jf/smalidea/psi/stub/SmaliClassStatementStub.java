@@ -36,27 +36,24 @@ import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.annotations.Nullable;
 import org.jf.smalidea.psi.SmaliElementTypes;
 import org.jf.smalidea.psi.impl.SmaliClassStatement;
+import org.jf.smalidea.util.NameUtils;
 
-public class SmaliClassStatementStub extends StubBase<SmaliClassStatement>  {
-    @Nullable private final String qualifiedName;
+public class SmaliClassStatementStub extends StubBase<SmaliClassStatement> {
+    @Nullable
+    private final String qualifiedName;
 
     public SmaliClassStatementStub(StubElement parent, @Nullable String qualifiedName) {
         super(parent, SmaliElementTypes.CLASS_STATEMENT);
         this.qualifiedName = qualifiedName;
     }
 
-    @Nullable public String getQualifiedName() {
+    @Nullable
+    public String getQualifiedName() {
         return qualifiedName;
     }
 
-    @Nullable public String getName() {
-        if (qualifiedName == null) {
-            return null;
-        }
-        int lastDot = qualifiedName.lastIndexOf('.');
-        if (lastDot < 0) {
-            return qualifiedName;
-        }
-        return qualifiedName.substring(lastDot+1);
+    @Nullable
+    public String getName() {
+        return NameUtils.shortNameFromQualifiedName(qualifiedName);
     }
 }

@@ -36,5 +36,17 @@ import com.intellij.openapi.util.IconLoader;
 import javax.swing.*;
 
 public class SmaliIcons {
-    public static final Icon SmaliIcon = IconLoader.getIcon("/icons/smali.png");
+
+    public static final Icon SmaliIcon = IconLoader.getIcon("/icons/icon_class.png");
+
+    public static final Icon ConstructorIcon = IconLoader.getIcon("/icons/icon_constructor_method.png");
+
+    public static final Icon InstanceMethodIcon = IconLoader.getIcon("/icons/icon_instance_method.png");
+
+    public static final Icon StaticMethodIcon = IconLoader.getIcon("/icons/icon_static_method.png");
+
+    public static final Icon StaticFieldIcon = IconLoader.getIcon("/icons/icon_static_field.png");
+
+    public static final Icon InstanceFieldIcon = IconLoader.getIcon("/icons/icon_instance_field.png");
+
 }

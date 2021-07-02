@@ -40,10 +40,14 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jf.dexlib2.AccessFlags;
+import org.jf.smalidea.SmaliIcons;
 import org.jf.smalidea.psi.SmaliElementTypes;
 import org.jf.smalidea.psi.iface.SmaliModifierListOwner;
 import org.jf.smalidea.psi.stub.SmaliFieldStub;
 import org.jf.smalidea.util.NameUtils;
+
+import javax.swing.*;
 
 public class SmaliField extends SmaliStubBasedPsiElement<SmaliFieldStub> implements PsiField, SmaliModifierListOwner {
     public SmaliField(@NotNull SmaliFieldStub stub) {
@@ -170,9 +174,17 @@ public class SmaliField extends SmaliStubBasedPsiElement<SmaliFieldStub> impleme
 
     @Override public int getTextOffset() {
         SmaliMemberName smaliMemberName = getNameIdentifier();
-        if (smaliMemberName != null) {
-            return smaliMemberName.getTextOffset();
+        return smaliMemberName.getTextOffset();
+    }
+
+
+    @Nullable
+    @Override
+    public Icon getIcon(int flags) {
+        if (getModifierList().hasModifierProperty(PsiModifier.STATIC)) {
+            return SmaliIcons.StaticFieldIcon;
+        } else {
+            return SmaliIcons.InstanceFieldIcon;
         }
-        return super.getTextOffset();
     }
 }

@@ -31,10 +31,26 @@
 
 package org.jf.smalidea.util;
 
-import com.intellij.psi.PsiElement;
+import com.intellij.lang.ASTNode;
+import com.intellij.openapi.application.ReadAction;
+import com.intellij.psi.*;
+import com.intellij.psi.impl.source.tree.LeafPsiElement;
+import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.PsiMatcherExpression;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jf.smalidea.SmaliLanguage;
+
+import java.util.regex.Pattern;
 
 public class PsiUtil {
+
+    private static final Pattern REGISTER_PATTERN = Pattern.compile("^v\\d+$");
+
+    public static boolean isSmaliToken(@Nullable PsiElement element, IElementType type) {
+        return element instanceof ASTNode && ((ASTNode) element).getElementType() == type;
+    }
+
     public static PsiElement searchBackward(PsiElement element, PsiMatcherExpression matcher,
                                             PsiMatcherExpression until) {
         while (!matcher.match(element)) {
@@ -54,7 +70,7 @@ public class PsiUtil {
     }
 
     public static PsiElement searchForward(PsiElement element, PsiMatcherExpression matcher,
-                                            PsiMatcherExpression until) {
+                                           PsiMatcherExpression until) {
         while (!matcher.match(element)) {
             if (until.match(element)) {
                 return null;
@@ -69,5 +85,22 @@ public class PsiUtil {
             element = next;
         }
         return element;
+    }
+
+
+    public static boolean isJavaLangObject(@NotNull final PsiClass aClass) {
+        return ReadAction.compute(() -> aClass.isValid() && CommonClassNames.JAVA_LANG_OBJECT.equals(aClass.getQualifiedName()));
+    }
+
+    public static boolean isFinal(@NotNull final PsiClass aClass) {
+        return ReadAction.compute(() -> aClass.hasModifierProperty(PsiModifier.FINAL));
+    }
+
+    public static boolean isSmaliFile(PsiFile file) {
+        return file != null && file.getLanguage() == SmaliLanguage.INSTANCE;
+    }
+
+    public static boolean isRegister(PsiElement element) {
+        return element instanceof LeafPsiElement && REGISTER_PATTERN.matcher(element.getText()).matches();
     }
 }

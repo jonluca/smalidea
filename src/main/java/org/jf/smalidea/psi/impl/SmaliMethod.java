@@ -49,15 +49,18 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jf.dexlib2.AccessFlags;
 import org.jf.dexlib2.analysis.AnalysisException;
 import org.jf.dexlib2.analysis.ClassPath;
 import org.jf.dexlib2.analysis.MethodAnalyzer;
+import org.jf.smalidea.SmaliIcons;
 import org.jf.smalidea.dexlib.SmalideaMethod;
 import org.jf.smalidea.dexlib.analysis.SmalideaClassProvider;
 import org.jf.smalidea.psi.SmaliElementTypes;
 import org.jf.smalidea.psi.iface.SmaliModifierListOwner;
 import org.jf.smalidea.psi.stub.SmaliMethodStub;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -184,6 +187,13 @@ public class SmaliMethod extends SmaliStubBasedPsiElement<SmaliMethodStub>
     public boolean isStatic() {
         return hasModifierProperty("static");
     }
+
+
+
+    public boolean isStaticConstructor() {
+        return hasModifierProperty("constructor") && hasModifierProperty("static");
+    }
+
 
     @Override public boolean isVarArgs() {
         return hasModifierProperty("varargs");
@@ -371,5 +381,17 @@ public class SmaliMethod extends SmaliStubBasedPsiElement<SmaliMethodStub>
             }
         }
         return null;
+    }
+
+    @Nullable
+    @Override
+    public Icon getIcon(int flags) {
+        if (getModifierList().hasModifierProperty(PsiModifier.STATIC)) {
+            return SmaliIcons.StaticMethodIcon;
+        } else if (getModifierList().hasModifierProperty(AccessFlags.CONSTRUCTOR.toString())) {
+            return SmaliIcons.ConstructorIcon;
+        } else {
+            return SmaliIcons.InstanceMethodIcon;
+        }
     }
 }
