@@ -1,15 +1,17 @@
-<idea-plugin>
+<idea-plugin version="2">
     <id>org.jf.smalidea</id>
     <name>Smalidea</name>
-    <version>0.02</version>
+    <version>0.06</version>
     <vendor email="jesusfreke@jesusfreke.com" url="http://smali.org">JesusFreke</vendor>
-    <depends optional="false">com.intellij.java</depends>
 
-    <description>Smali调试器</description>
+    <description><![CDATA[
+      A smali language plugin for IDEA that supports syntax highlighting, debugging, navigation, etc.
+    ]]></description>
 
-    <change-notes>增加部高亮 代码结构 代码跳转</change-notes>
+    <change-notes><![CDATA[]]>
+    </change-notes>
 
-    <idea-version since-build="143"/>
+    <idea-version since-build="191.4212.41"/>
 
     <extensions defaultExtensionNs="com.intellij">
 
@@ -22,7 +24,9 @@
         <fileTypeFactory implementation="org.jf.smalidea.SmaliFileTypeFactory"/>
         <fileType implementationClass="org.jf.smalidea.SmaliFileType" language="smali" extensions="smali"/>
 
-        <syntaxHighlighter key="smali" implementationClass="org.jf.smalidea.SmaliHighlighter"/>
+        <syntaxHighlighter key="smali" factoryClass="org.jf.smalidea.highlighter.SmaliHighlighterFactory"/>
+        <lang.syntaxHighlighterFactory language="smali"
+                                       implementationClass="org.jf.smalidea.highlighter.SmaliHighlighterFactory"/>
 
         <colorSettingsPage implementation="org.jf.smalidea.SmaliColorsPage"/>
 
@@ -68,6 +72,13 @@
         <usageTargetProvider implementation="org.jf.smalidea.findUsages.SmaliUsageTargetProvider"/>
 
         <usageTypeProvider implementation="org.jf.smalidea.findUsages.SmaliUsageTypeProvider"/>
+        <errorHandler implementation="org.jf.smalidea.errorReporting.ErrorReporter"/>
+        <todoIndexer filetype="smali" implementationClass="org.jf.smalidea.highlighter.SmaliTodoIndexer"/>
+
+        <!-- The "Smali" (with a capital S) language is the one registered by Android Studio's smali plugin.
+             This substitutor ensures that smalidea's "smali" (lowercase s) language is used instead of AS's "Smali"
+             language. -->
+        <lang.substitutor language="Smali" implementationClass="org.jf.smalidea.SmaliSubstitutor"/>
 
         <targetElementUtilExtender implementation="org.jf.smalidea.codeInsight.SmaliTargetElementEvaluator"/>
         <targetElementEvaluator language="smali"
@@ -142,8 +153,19 @@
         </intentionAction>
     </extensions>
 
-    <actions>
+    <application-components>
+    </application-components>
 
+    <project-components>
+    </project-components>
+
+    <actions>
     </actions>
+
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.lang</depends>
+    <depends>com.intellij.modules.java</depends>
+    <depends>com.intellij.modules.xdebugger</depends>
+
 
 </idea-plugin>

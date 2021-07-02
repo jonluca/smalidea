@@ -32,11 +32,13 @@
 package org.jf.smalidea.psi.impl;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.navigation.ItemPresentation;
 import com.intellij.psi.*;
 import com.intellij.psi.PsiModifier.ModifierConstant;
 import com.intellij.psi.impl.PsiImplUtil;
 import com.intellij.psi.javadoc.PsiDocComment;
 import com.intellij.util.IncorrectOperationException;
+import com.intellij.util.PlatformIcons;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -45,11 +47,12 @@ import org.jf.smalidea.SmaliIcons;
 import org.jf.smalidea.psi.SmaliElementTypes;
 import org.jf.smalidea.psi.iface.SmaliModifierListOwner;
 import org.jf.smalidea.psi.stub.SmaliFieldStub;
+import org.jf.smalidea.util.IconUtils;
 import org.jf.smalidea.util.NameUtils;
 
 import javax.swing.*;
 
-public class SmaliField extends SmaliStubBasedPsiElement<SmaliFieldStub> implements PsiField, SmaliModifierListOwner {
+public class SmaliField extends SmaliStubBasedPsiElement<SmaliFieldStub> implements PsiField, SmaliModifierListOwner, ItemPresentation {
     public SmaliField(@NotNull SmaliFieldStub stub) {
         super(stub, SmaliElementTypes.FIELD);
     }
@@ -81,6 +84,11 @@ public class SmaliField extends SmaliStubBasedPsiElement<SmaliFieldStub> impleme
         SmaliMemberName memberName = findChildByClass(SmaliMemberName.class);
         assert memberName != null;
         return memberName;
+    }
+
+    @Override
+    public ItemPresentation getPresentation() {
+        return this;
     }
 
     @Nullable @Override public PsiDocComment getDocComment() {
@@ -186,5 +194,17 @@ public class SmaliField extends SmaliStubBasedPsiElement<SmaliFieldStub> impleme
         } else {
             return SmaliIcons.InstanceFieldIcon;
         }
+    }
+
+    @Nullable
+    @Override
+    public String getPresentableText() {
+        return getName() + ": " + getType().getPresentableText();
+    }
+
+    @Nullable
+    @Override
+    public String getLocationString() {
+        return "";
     }
 }
