@@ -45,7 +45,7 @@ import static com.intellij.psi.util.proximity.ReferenceListWeigher.ReferenceList
 public class SmaliCompletionUtil {
 
 
-    public static void processSmaliReference(CompletionParameters parameters, CompletionResultSet result,String acceptPrefix) {
+    public static void processSmaliReference(CompletionParameters parameters, CompletionResultSet result, String acceptPrefix) {
 
         PsiElement pos = parameters.getPosition();
 
@@ -354,7 +354,9 @@ public class SmaliCompletionUtil {
     public static void processSmaliRegisterDot(CompletionParameters parameters, CompletionResultSet withPrefixMatcher, String dot) {
         PsiElement register = parameters.getOriginalPosition().getPrevSibling();
         PsiClass type = Infer.infer(register);
-        completionMethods(withPrefixMatcher,type);
+        if (type != null) {
+            completionMethods(withPrefixMatcher, type);
+        }
     }
 
 

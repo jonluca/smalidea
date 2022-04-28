@@ -31,7 +31,7 @@
 
 plugins {
     id 'java'
-    id 'org.jetbrains.intellij' version '1.1.2'
+    id "org.jetbrains.intellij" version "1.5.2"
 }
 
 apply plugin: 'antlr'
@@ -70,9 +70,11 @@ tasks.withType(Test) {
     systemProperty "file.encoding", "UTF-8"
 }
 
+
 intellij {
     plugins = ['java']
     updateSinceUntilBuild = false
+    version = "IU-221.5080.210"
 }
 
 repositories {

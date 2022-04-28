@@ -21,10 +21,10 @@
         <constantExpressionEvaluator language="smali"
                                      implementationClass="org.jf.smalidea.psi.impl.SmaliPsiExpressionEvaluator"/>
 
-        <fileTypeFactory implementation="org.jf.smalidea.SmaliFileTypeFactory"/>
         <fileType implementationClass="org.jf.smalidea.SmaliFileType" language="smali" extensions="smali"/>
 
         <syntaxHighlighter key="smali" factoryClass="org.jf.smalidea.highlighter.SmaliHighlighterFactory"/>
+
         <lang.syntaxHighlighterFactory language="smali"
                                        implementationClass="org.jf.smalidea.highlighter.SmaliHighlighterFactory"/>
 
@@ -45,7 +45,7 @@
         <codeInsight.lineMarkerProvider language="smali" implementationClass="org.jf.smalidea.codeInsight.daemon.impl.SmaliLineMarkerProvider"/>
         <codeInsight.lineMarkerProvider language="smali" implementationClass="com.intellij.codeInsight.daemon.impl.RecursiveCallLineMarkerProvider"/>
         <codeInsight.lineMarkerProvider language="smali" implementationClass="com.intellij.codeInsight.ExternalAnnotationLineMarkerProvider"/>
-        <codeInsight.lineMarkerProvider language="smali" implementationClass="com.intellij.codeInsight.InferredAnnotationsLineMarkerProvider"/>
+<!--        <codeInsight.lineMarkerProvider language="smali" implementationClass="com.intellij.codeInsight.InferredAnnotationsLineMarkerProvider"/>-->
 
         <lang.foldingBuilder language="smali" implementationClass="org.jf.smalidea.codeInsight.folding.impl.SmaliFoldingBuilder"/>
 
