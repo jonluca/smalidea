@@ -46,12 +46,14 @@ import org.jf.smalidea.psi.impl.SmaliMemberName;
 
 /**
  * A usage target provider for smali member names consisting of primitive types.
- *
+ * <p>
  * For member names like IIII, the default logic to find the usage target doesn't work, due to the member
  * name being split up into multiple leaf tokens.
  */
 public class SmaliUsageTargetProvider implements UsageTargetProvider {
-    @Nullable @Override public UsageTarget[] getTargets(Editor editor, PsiFile file) {
+    @Nullable
+    @Override
+    public UsageTarget[] getTargets(Editor editor, PsiFile file) {
         int adjustedOffset = TargetElementUtil.adjustOffset(file, editor.getDocument(), editor.getCaretModel().getOffset());
         PsiElement element = file.findElementAt(adjustedOffset);
         if (element == null) {
@@ -60,7 +62,9 @@ public class SmaliUsageTargetProvider implements UsageTargetProvider {
         return getTargets(element);
     }
 
-    @Nullable @Override public UsageTarget[] getTargets(PsiElement element) {
+    @Nullable
+    @Override
+    public UsageTarget[] getTargets(PsiElement element) {
         ASTNode node = element.getNode();
         if (node == null) {
             return null;
@@ -69,7 +73,7 @@ public class SmaliUsageTargetProvider implements UsageTargetProvider {
         if (node.getElementType() == SmaliTokens.PARAM_LIST_OR_ID_PRIMITIVE_TYPE) {
             PsiElement parent = element.getParent();
             if (parent instanceof SmaliMemberName) {
-                return new UsageTarget[] { new PsiElement2UsageTargetAdapter(parent.getParent()) };
+                return new UsageTarget[]{new PsiElement2UsageTargetAdapter(parent.getParent(), true)};
             }
         }
         return null;

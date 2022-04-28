@@ -19,22 +19,13 @@ package org.jf.smalidea.codeInsight.completion;
 import com.intellij.codeInsight.completion.*;
 import com.intellij.codeInsight.lookup.Lookup;
 import com.intellij.codeInsight.lookup.LookupElement;
-import com.intellij.codeInsight.lookup.LookupValueWithPsiElement;
-import com.intellij.diagnostic.LogEventException;
-import com.intellij.diagnostic.ThreadDumper;
 import com.intellij.featureStatistics.FeatureUsageTracker;
-import com.intellij.lang.Language;
-import com.intellij.openapi.diagnostic.Attachment;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.extensions.Extensions;
-import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.util.ExceptionUtil;
 import com.intellij.util.UnmodifiableIterator;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NonNls;
@@ -47,43 +38,9 @@ import static com.intellij.patterns.PlatformPatterns.character;
 
 public class CompletionUtil {
 
-  private static final CompletionData ourGenericCompletionData = new CompletionData() {
-    {
-      /*final HippieWordCompletionHandler.CompletionVariant variant = new CompletionVariant(PsiElement.class, TrueFilter.INSTANCE);
-      variant.addCompletionFilter(TrueFilter.INSTANCE, TailType.NONE);
-      registerVariant(variant);*/
-    }
-  };
   public static final @NonNls String DUMMY_IDENTIFIER = CompletionInitializationContext.DUMMY_IDENTIFIER;
   public static final @NonNls String DUMMY_IDENTIFIER_TRIMMED = DUMMY_IDENTIFIER.trim();
 
-  @Nullable
-  public static CompletionData getCompletionDataByElement(@Nullable final PsiElement position, @NotNull PsiFile originalFile) {
-    if (position == null) return null;
-
-    PsiElement parent = position.getParent();
-    Language language = parent == null ? position.getLanguage() : parent.getLanguage();
-    final FileType fileType = language.getAssociatedFileType();
-    if (fileType != null) {
-      final CompletionData mainData = getCompletionDataByFileType(fileType);
-      if (mainData != null) {
-        return mainData;
-      }
-    }
-
-    final CompletionData mainData = getCompletionDataByFileType(originalFile.getFileType());
-    return mainData != null ? mainData : ourGenericCompletionData;
-  }
-
-  @Nullable
-  private static CompletionData getCompletionDataByFileType(FileType fileType) {
-    for(CompletionDataEP ep: Extensions.getExtensions(CompletionDataEP.EP_NAME)) {
-      if (ep.fileType.equals(fileType.getName())) {
-        return ep.getHandler();
-      }
-    }
-    return null;
-  }
 
   public static boolean shouldShowFeature(final CompletionParameters parameters, @NonNls final String id) {
     if (FeatureUsageTracker.getInstance().isToBeAdvertisedInLookup(id, parameters.getPosition().getProject())) {
@@ -129,8 +86,8 @@ public class CompletionUtil {
   }
 
   @Nullable
-  public static String findReferencePrefix(CompletionParameters parameters) {
-    return CompletionData.getReferencePrefix(parameters.getPosition(), parameters.getOffset());
+  public static String findReferencePrefix(CompletionParameters parameters){
+    return com.intellij.codeInsight.completion.CompletionUtil.findReferencePrefix(parameters.getPosition(), parameters.getOffset());
   }
 
 
@@ -181,11 +138,11 @@ public class CompletionUtil {
       return getOriginalElement(psiElement);
     }
 
-    Object object = lookupElement.getObject();
+ /*   Object object = lookupElement.getObject();
     if (object instanceof LookupValueWithPsiElement) {
       final PsiElement element = ((LookupValueWithPsiElement)object).getElement();
       if (element != null && element.isValid()) return getOriginalElement(element);
-    }
+    }*/
 
     return null;
   }
@@ -249,7 +206,7 @@ public class CompletionUtil {
               return super.hasNext();
             }
             catch (ConcurrentModificationException e) {
-              throw handleCME(e);
+              throw e;
             }
           }
 
@@ -259,14 +216,8 @@ public class CompletionUtil {
               return super.next();
             }
             catch (ConcurrentModificationException e) {
-              throw handleCME(e);
+              throw e;
             }
-          }
-
-          private LogEventException handleCME(ConcurrentModificationException e) {
-            final Attachment dump = new Attachment("threadDump.txt", ThreadDumper.dumpThreadsToString());
-            return new LogEventException("Error while traversing lookup strings of " + element + " of " + element.getClass(),
-                                        ExceptionUtil.getThrowableText(e), dump);
           }
         };
       }

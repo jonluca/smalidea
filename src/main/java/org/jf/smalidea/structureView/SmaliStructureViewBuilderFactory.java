@@ -23,23 +23,13 @@ public class SmaliStructureViewBuilderFactory implements PsiStructureViewFactory
     @Override
     public StructureViewBuilder getStructureViewBuilder(@NotNull final PsiFile psiFile) {
         return new TreeBasedStructureViewBuilder() {
-            @NotNull
             @Override
+            @NotNull
             public StructureViewModel createStructureViewModel(@Nullable Editor editor) {
+                if (!(psiFile instanceof SmaliFile)) {
+                    return null;
+                }
                 return new SmaliStructureViewModel((PsiClassOwner) psiFile, editor);
-        if (!(psiFile instanceof SmaliFile)) {
-            return null;
-        }
-        return new TreeBasedStructureViewBuilder() {
-            @Override
-            @NotNull
-            public StructureViewModel createStructureViewModel(@Nullable Editor editor) {
-                return new SmaliFileTreeModel((SmaliFile) psiFile);
-            }
-
-            @Override
-            public boolean isRootNodeShown() {
-                return false;
             }
         };
     }

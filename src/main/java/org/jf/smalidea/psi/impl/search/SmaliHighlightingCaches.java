@@ -61,7 +61,7 @@ public class SmaliHighlightingCaches {
 
     @NotNull
     private <T, V> ConcurrentMap<T, V> createWeakCache() {
-        ConcurrentMap<T, V> map = ContainerUtil.createConcurrentWeakKeySoftValueMap(10, 0.7f, Runtime.getRuntime().availableProcessors(), ContainerUtil.canonicalStrategy());
+        ConcurrentMap<T, V> map =  ContainerUtil.createConcurrentWeakKeySoftValueMap();
         allCaches.add(map);
         return map;
     }

@@ -9,10 +9,13 @@ import com.intellij.codeInsight.completion.util.ParenthesesInsertHandler;
 import com.intellij.codeInsight.daemon.impl.analysis.LambdaHighlightingUtil;
 import com.intellij.codeInsight.lookup.*;
 import com.intellij.lang.StdLanguages;
+import com.intellij.lang.xml.XMLLanguage;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.*;
+import com.intellij.psi.codeStyle.CodeStyleSettings;
+import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
 import com.intellij.psi.impl.source.PostprocessReformattingAspect;
 import com.intellij.psi.util.ClassUtil;
@@ -24,6 +27,7 @@ import com.intellij.ui.JBColor;
 import com.intellij.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jf.smalidea.SmaliLanguage;
 import org.jf.smalidea.psi.SmaliPsiKeyword;
 import org.jf.smalidea.psi.impl.SmaliMethod;
 import org.jf.smalidea.psi.leaf.SmaliClassDescriptor;
@@ -239,7 +243,7 @@ public class SmaliCompletionUtil {
 
         context.commitDocument();
 
-        final CommonCodeStyleSettings styleSettings = context.getCodeStyleSettings();
+        final CommonCodeStyleSettings styleSettings = CodeStyleSettings.getDefaults().getCommonSettings(SmaliLanguage.INSTANCE);
         final PsiElement elementAt = file.findElementAt(context.getStartOffset());
         if (elementAt == null || !(elementAt.getParent() instanceof PsiMethodReferenceExpression)) {
             final boolean hasParameters = hasParams;
@@ -341,8 +345,8 @@ public class SmaliCompletionUtil {
     }
 
     public static String escapeXmlIfNeeded(InsertionContext context, String generics) {
-        if (context.getFile().getViewProvider().getBaseLanguage() == StdLanguages.JSPX) {
-            return StringUtil.escapeXml(generics);
+        if (context.getFile().getViewProvider().getBaseLanguage() == XMLLanguage.INSTANCE) {
+            return StringUtil.escapeXmlEntities(generics);
         }
         return generics;
     }

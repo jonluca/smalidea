@@ -104,19 +104,4 @@ public class SmaliDocumentationProvider extends JavaDocumentationProvider {
         super.promptToConfigureDocumentation(element);
     }
 
-    @Nullable
-    @Override
-    public PsiElement getCustomDocumentationElement(@NotNull Editor editor, @NotNull PsiFile file, @Nullable PsiElement contextElement) {
-        return super.getCustomDocumentationElement(editor, file, contextElement);
-//        if (contextElement instanceof PsiWhiteSpace) return null;
-//        if (contextElement instanceof LeafPsiElement) {
-//            com.intellij.psi.tree.IElementType elementType = ((LeafPsiElement) contextElement).getElementType();
-//            if (elementType.equals(SmaliTokens.POSITIVE_INTEGER_LITERAL)) {//字面量
-//
-//            }
-//        }
-//
-//        SmaliStubBasedPsiElement element = PsiTreeUtil.getParentOfType(contextElement, SmaliStubBasedPsiElement.class, false);
-//        return element != null ? element : super.getCustomDocumentationElement(editor, file, contextElement);
-    }
 }

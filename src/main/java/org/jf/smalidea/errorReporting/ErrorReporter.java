@@ -22,6 +22,7 @@ import com.intellij.ide.DataManager;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManager;
 import com.intellij.idea.IdeaLogger;
+import com.intellij.notification.NotificationGroupManager;
 import com.intellij.notification.NotificationListener;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -37,6 +38,7 @@ import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.progress.EmptyProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.updateSettings.impl.UpdateSettings;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Consumer;
@@ -84,10 +86,12 @@ public class ErrorReporter extends ErrorReportSubmitter {
                 null, "Issue " + token, SubmittedReportInfo.SubmissionStatus.NEW_ISSUE);
         consumer.consume(reportInfo);
 
-        ReportMessages.GROUP.createNotification(ReportMessages.ERROR_REPORT,
-                "Submitted",
-                NotificationType.INFORMATION,
-                null).setImportant(false).notify(project);
+        NotificationGroupManager.getInstance()
+                .getNotificationGroup("Error Report")
+                .createNotification("Submitted", MessageType.ERROR)
+                .setImportant(false)
+                .notify(project);
+
       }
     };
 
@@ -98,10 +102,14 @@ public class ErrorReporter extends ErrorReportSubmitter {
                 "Please consider manually creating an issue on the " +
                 "<a href=\"https://github.com/JesusFreke/smali/issues\">Smali Issue Tracker</a></html>",
                 e.getMessage());
-        ReportMessages.GROUP.createNotification(ReportMessages.ERROR_REPORT,
-                message,
-                NotificationType.ERROR,
-                NotificationListener.URL_OPENING_LISTENER).setImportant(false).notify(project);
+
+        NotificationGroupManager.getInstance()
+                .getNotificationGroup("Error Report")
+                .createNotification("",MessageType.ERROR)
+                .setListener(NotificationListener.URL_OPENING_LISTENER)
+                .setImportant(false)
+                .notify(project);
+
       }
     };
 
@@ -129,9 +137,9 @@ public class ErrorReporter extends ErrorReportSubmitter {
 
     params.put("protocol.version", "1");
 
-    params.put("os.name", SystemProperties.getOsName());
-    params.put("java.version", SystemProperties.getJavaVersion());
-    params.put("java.vm.vendor", SystemProperties.getJavaVmVendor());
+    params.put("os.name", System.getProperty("os.name"));
+    params.put("java.version", System.getProperty("java.version"));
+    params.put("java.vm.vendor", System.getProperty("java.vm.vendor"));
 
     ApplicationInfoEx appInfo = ApplicationInfoEx.getInstanceEx();
     ApplicationNamesInfo namesInfo = ApplicationNamesInfo.getInstance();

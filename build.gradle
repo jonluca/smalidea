@@ -71,9 +71,8 @@ tasks.withType(Test) {
 }
 
 intellij {
-    version '2020.3.2'
-    plugins 'java'
-    updateSinceUntilBuild false
+    plugins = ['java']
+    updateSinceUntilBuild = false
 }
 
 repositories {
@@ -101,7 +100,7 @@ dependencies {
     testImplementation group: 'junit', name: 'junit', version: '4.12'
 //    compileOnly fileTree(dir: 'src/main/stubs', include: '*.jar')
 
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testImplementation group: 'junit', name: 'junit', version: '4.12'
 }
 
 task extractTokens(type: org.gradle.api.tasks.Copy) {
@@ -125,6 +124,6 @@ generateGrammarSource {
 generateGrammarSource.dependsOn(extractTokens)
 
 wrapper {
-    gradleVersion = '6.8.2'
+    gradleVersion = '7.0'
     distributionType = Wrapper.DistributionType.ALL
 }

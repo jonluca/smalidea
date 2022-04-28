@@ -32,7 +32,12 @@
 package org.jf.smalidea.psi.impl;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.lang.jvm.JvmElementVisitor;
+import com.intellij.lang.jvm.JvmModifier;
+import com.intellij.model.psi.PsiSymbolDeclaration;
+import com.intellij.model.psi.PsiSymbolReference;
 import com.intellij.navigation.ItemPresentation;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
 import com.intellij.psi.PsiModifier.ModifierConstant;
 import com.intellij.psi.impl.PsiImplUtil;
@@ -51,6 +56,7 @@ import org.jf.smalidea.util.IconUtils;
 import org.jf.smalidea.util.NameUtils;
 
 import javax.swing.*;
+import java.util.Collection;
 
 public class SmaliField extends SmaliStubBasedPsiElement<SmaliFieldStub> implements PsiField, SmaliModifierListOwner, ItemPresentation {
     public SmaliField(@NotNull SmaliFieldStub stub) {
@@ -87,6 +93,11 @@ public class SmaliField extends SmaliStubBasedPsiElement<SmaliFieldStub> impleme
     }
 
     @Override
+    public @Nullable PsiElement getIdentifyingElement() {
+        return PsiField.super.getIdentifyingElement();
+    }
+
+    @Override
     public ItemPresentation getPresentation() {
         return this;
     }
@@ -115,6 +126,11 @@ public class SmaliField extends SmaliStubBasedPsiElement<SmaliFieldStub> impleme
             return factory.createTypeFromText("java.lang.Object", this);
         }
         return getTypeElement().getType();
+    }
+
+    @Override
+    public <T> T accept(@NotNull JvmElementVisitor<T> visitor) {
+        return PsiField.super.accept(visitor);
     }
 
     @Nullable @Override public SmaliTypeElement getTypeElement() {
@@ -154,6 +170,11 @@ public class SmaliField extends SmaliStubBasedPsiElement<SmaliFieldStub> impleme
         return getStubOrPsiChildren(SmaliElementTypes.ANNOTATION, new SmaliAnnotation[0]);
     }
 
+    @Override
+    public @Nullable PsiAnnotation getAnnotation(@NotNull @NonNls String fqn) {
+        return PsiField.super.getAnnotation(fqn);
+    }
+
     @NotNull @Override public SmaliAnnotation[] getApplicableAnnotations() {
         return getAnnotations();
     }
@@ -176,13 +197,38 @@ public class SmaliField extends SmaliStubBasedPsiElement<SmaliFieldStub> impleme
         return SmaliModifierListOwner.super.hasAnnotation(fqn);
     }
 
+    @Override
+    public boolean hasModifier(@NotNull JvmModifier modifier) {
+        return PsiField.super.hasModifier(modifier);
+    }
+
+    @Override
+    public @Nullable PsiElement getSourceElement() {
+        return PsiField.super.getSourceElement();
+    }
+
     @Override public void setInitializer(@Nullable PsiExpression initializer) throws IncorrectOperationException {
         // TODO: implement this
+    }
+
+    @Override
+    public @NotNull TextRange getTextRangeInParent() {
+        return super.getTextRangeInParent();
     }
 
     @Override public int getTextOffset() {
         SmaliMemberName smaliMemberName = getNameIdentifier();
         return smaliMemberName.getTextOffset();
+    }
+
+    @Override
+    public @NotNull Collection<? extends @NotNull PsiSymbolDeclaration> getOwnDeclarations() {
+        return super.getOwnDeclarations();
+    }
+
+    @Override
+    public @NotNull Collection<? extends @NotNull PsiSymbolReference> getOwnReferences() {
+        return super.getOwnReferences();
     }
 
 
@@ -206,5 +252,10 @@ public class SmaliField extends SmaliStubBasedPsiElement<SmaliFieldStub> impleme
     @Override
     public String getLocationString() {
         return "";
+    }
+
+    @Override
+    public @Nullable Icon getIcon(boolean unused) {
+        return null;
     }
 }
