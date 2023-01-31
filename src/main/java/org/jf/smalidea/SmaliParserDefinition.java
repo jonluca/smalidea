@@ -50,6 +50,10 @@ import org.jf.smalidea.psi.impl.SmaliFile;
 import org.jf.smalidea.psi.stub.element.SmaliStubElementType;
 
 public class SmaliParserDefinition implements ParserDefinition {
+    private static final TokenSet WHITESPACE = TokenSet.create(TokenType.WHITE_SPACE);
+    private static final TokenSet COMMENT = TokenSet.create(SmaliTokens.LINE_COMMENT);
+    private static final TokenSet STRING_LITERAL = TokenSet.create(SmaliTokens.STRING_LITERAL);
+
     @NotNull @Override public Lexer createLexer(Project project) {
         return new SmaliLexer();
     }
@@ -62,17 +66,14 @@ public class SmaliParserDefinition implements ParserDefinition {
         return SmaliElementTypes.FILE;
     }
 
-    private static final TokenSet WHITESPACE = TokenSet.create(TokenType.WHITE_SPACE);
     @NotNull @Override public TokenSet getWhitespaceTokens() {
         return WHITESPACE;
     }
 
-    private static final TokenSet COMMENT = TokenSet.create(SmaliTokens.LINE_COMMENT);
     @NotNull @Override public TokenSet getCommentTokens() {
         return COMMENT;
     }
 
-    private static final TokenSet STRING_LITERAL = TokenSet.create(SmaliTokens.STRING_LITERAL);
     @NotNull @Override public TokenSet getStringLiteralElements() {
         return STRING_LITERAL;
     }
@@ -80,7 +81,7 @@ public class SmaliParserDefinition implements ParserDefinition {
     @NotNull @Override public PsiElement createElement(ASTNode node) {
         IElementType elementType = node.getElementType();
         if (elementType instanceof SmaliStubElementType) {
-            return ((SmaliStubElementType)elementType).createPsi(node);
+            return ((SmaliStubElementType<?, ?>)elementType).createPsi(node);
         }
         throw new RuntimeException("Unexpected element type");
     }

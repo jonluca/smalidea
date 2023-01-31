@@ -37,7 +37,7 @@ public class SmaliLanguage extends Language {
     public static final SmaliLanguage INSTANCE = new SmaliLanguage();
 
     private SmaliLanguage() {
-        super("smali", "text/smali");
+        super("Smali", "text/smali");
     }
 
     @Override public boolean isCaseSensitive() {

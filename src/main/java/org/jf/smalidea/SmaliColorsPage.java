@@ -134,6 +134,6 @@ public class SmaliColorsPage implements ColorSettingsPage {
     }
 
     @NotNull @Override public String getDisplayName() {
-        return "smali";
+        return "Smali";
     }
 }

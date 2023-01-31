@@ -74,7 +74,7 @@ tasks.withType(Test) {
 intellij {
     plugins = ['java']
     updateSinceUntilBuild = false
-    version = "IU-221.5080.210"
+    version = "IC-221.5080.210"
 }
 
 repositories {

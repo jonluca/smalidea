@@ -47,11 +47,12 @@ public class SmaliFileType extends LanguageFileType {
     }
 
     @NotNull @Override public String getName() {
-        return "smali";
+        return "Smali";
     }
 
+
     @NotNull @Override public String getDescription() {
-        return "smali Files";
+        return "Smali";
     }
 
     @NotNull @Override public String getDefaultExtension() {
