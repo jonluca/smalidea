@@ -95,7 +95,7 @@ dependencies {
     implementation group: 'org.smali', name: 'smali', version: '2.5.0'
     implementation group: 'org.smali', name: 'dexlib2', version: '2.5.0'
     implementation group: 'org.antlr', name: 'antlr-runtime', version: '3.5.2'
-    implementation group: 'com.google.code.gson', name: 'gson', version: '2.3.1'
+    implementation group: 'com.google.code.gson', name: 'gson', version: '2.10.1'
 
     antlr group: 'org.antlr', name: 'antlr', version: '3.5.2'
 
