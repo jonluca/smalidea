@@ -1,8 +1,8 @@
 <idea-plugin version="2">
     <id>org.jf.smalidea</id>
     <name>Smalidea</name>
-    <version>0.06</version>
-    <vendor email="jesusfreke@jesusfreke.com" url="http://smali.org">JesusFreke</vendor>
+    <version>0.07</version>
+    <vendor email="jesusfreke@jesusfreke.com" url="http://smali.org">JL</vendor>
 
     <description><![CDATA[
       A smali language plugin for IDEA that supports syntax highlighting, debugging, navigation, etc.
@@ -18,36 +18,36 @@
         <applicationService serviceInterface="org.jf.smalidea.codeInsight.folding.SmaliCodeFoldingSettings"
                             serviceImplementation="org.jf.smalidea.codeInsight.folding.impl.SmaliCodeFoldingSettingsImpl"/>
 
-        <constantExpressionEvaluator language="Smali"
+        <constantExpressionEvaluator language="smali"
                                      implementationClass="org.jf.smalidea.psi.impl.SmaliPsiExpressionEvaluator"/>
 
-        <fileType implementationClass="org.jf.smalidea.SmaliFileType" name="Smali" language="Smali" extensions="Smali"/>
+        <fileType implementationClass="org.jf.smalidea.SmaliFileType" name="smali" language="smali" extensions="smali"/>
 
-        <syntaxHighlighter key="Smali" factoryClass="org.jf.smalidea.highlighter.SmaliHighlighterFactory"/>
+        <syntaxHighlighter key="smali" factoryClass="org.jf.smalidea.highlighter.SmaliHighlighterFactory"/>
 
-        <lang.syntaxHighlighterFactory language="Smali"
+        <lang.syntaxHighlighterFactory language="smali"
                                        implementationClass="org.jf.smalidea.highlighter.SmaliHighlighterFactory"/>
 
         <colorSettingsPage implementation="org.jf.smalidea.SmaliColorsPage"/>
 
-        <lang.parserDefinition language="Smali" implementationClass="org.jf.smalidea.SmaliParserDefinition"/>
+        <lang.parserDefinition language="smali" implementationClass="org.jf.smalidea.SmaliParserDefinition"/>
 
-        <lang.ast.factory language="Smali" implementationClass="org.jf.smalidea.SmaliASTFactory"/>
+        <lang.ast.factory language="smali" implementationClass="org.jf.smalidea.SmaliASTFactory"/>
 
         <java.elementFinder implementation="org.jf.smalidea.psi.index.SmaliClassFinder"/>
 
-        <lang.commenter language="Smali" implementationClass="org.jf.smalidea.SmaliCommeter"/>
+        <lang.commenter language="smali" implementationClass="org.jf.smalidea.SmaliCommeter"/>
 
         <stubIndex implementation="org.jf.smalidea.psi.index.SmaliClassNameIndex"/>
         <stubIndex implementation="org.jf.smalidea.psi.index.SmaliSuperClassNameIndex"/>
         <stubIndex implementation="org.jf.smalidea.psi.index.SmaliFullClassNameIndex"/>
 
-        <codeInsight.lineMarkerProvider language="Smali" implementationClass="org.jf.smalidea.codeInsight.daemon.impl.SmaliLineMarkerProvider"/>
-        <codeInsight.lineMarkerProvider language="Smali" implementationClass="com.intellij.codeInsight.daemon.impl.RecursiveCallLineMarkerProvider"/>
-        <codeInsight.lineMarkerProvider language="Smali" implementationClass="com.intellij.codeInsight.ExternalAnnotationLineMarkerProvider"/>
-<!--        <codeInsight.lineMarkerProvider language="Smali" implementationClass="com.intellij.codeInsight.InferredAnnotationsLineMarkerProvider"/>-->
+        <codeInsight.lineMarkerProvider language="smali" implementationClass="org.jf.smalidea.codeInsight.daemon.impl.SmaliLineMarkerProvider"/>
+        <codeInsight.lineMarkerProvider language="smali" implementationClass="com.intellij.codeInsight.daemon.impl.RecursiveCallLineMarkerProvider"/>
+        <codeInsight.lineMarkerProvider language="smali" implementationClass="com.intellij.codeInsight.ExternalAnnotationLineMarkerProvider"/>
+<!--        <codeInsight.lineMarkerProvider language="smali" implementationClass="com.intellij.codeInsight.InferredAnnotationsLineMarkerProvider"/>-->
 
-        <lang.foldingBuilder language="Smali" implementationClass="org.jf.smalidea.codeInsight.folding.impl.SmaliFoldingBuilder"/>
+        <lang.foldingBuilder language="smali" implementationClass="org.jf.smalidea.codeInsight.folding.impl.SmaliFoldingBuilder"/>
 
         <debugger.positionManagerFactory implementation="org.jf.smalidea.debugging.SmaliPositionManagerFactory"/>
 
@@ -64,7 +64,7 @@
 
         <stubElementTypeHolder class="org.jf.smalidea.psi.SmaliElementTypes"/>
 
-        <lang.findUsagesProvider language="Smali"
+        <lang.findUsagesProvider language="smali"
                                  implementationClass="org.jf.smalidea.findUsages.SmaliFindUsagesProvider"/>
 
         <referencesSearch implementation="org.jf.smalidea.findUsages.SmaliClassReferenceSearcher"/>
@@ -73,35 +73,35 @@
 
         <usageTypeProvider implementation="org.jf.smalidea.findUsages.SmaliUsageTypeProvider"/>
         <errorHandler implementation="org.jf.smalidea.errorReporting.ErrorReporter"/>
-        <todoIndexer filetype="Smali" implementationClass="org.jf.smalidea.highlighter.SmaliTodoIndexer"/>
+        <todoIndexer filetype="smali" implementationClass="org.jf.smalidea.highlighter.SmaliTodoIndexer"/>
 
-        <!-- The "Smali" (with a capital S) language is the one registered by Android Studio's smali plugin.
-             This substitutor ensures that smalidea's "Smali" (lowercase s) language is used instead of AS's "Smali"
+        <!-- The "smali" (with a capital S) language is the one registered by Android Studio's smali plugin.
+             This substitutor ensures that smalidea's "smali" (lowercase s) language is used instead of AS's "smali"
              language. -->
-        <lang.substitutor language="Smali" implementationClass="org.jf.smalidea.SmaliSubstitutor"/>
+        <lang.substitutor language="smali" implementationClass="org.jf.smalidea.SmaliSubstitutor"/>
 
         <targetElementUtilExtender implementation="org.jf.smalidea.codeInsight.SmaliTargetElementEvaluator"/>
-        <targetElementEvaluator language="Smali"
+        <targetElementEvaluator language="smali"
                                 implementationClass="org.jf.smalidea.codeInsight.SmaliTargetElementEvaluator"/>
 
         <errorHandler implementation="org.jf.smalidea.errorReporting.ErrorReporter"/>
 
-        <lang.psiStructureViewFactory language="Smali"
+        <lang.psiStructureViewFactory language="smali"
                                       implementationClass="org.jf.smalidea.structureView.SmaliStructureViewBuilderFactory"/>
 
-        <lang.documentationProvider language="Smali"
+        <lang.documentationProvider language="smali"
 
                                     implementationClass="org.jf.smalidea.documentProvider.SmaliDocumentationProvider"/>
-        <typedHandler implementation="org.jf.smalidea.codeInsight.editorActions.SmaliTypedHandler" id="Smali"/>
+        <typedHandler implementation="org.jf.smalidea.codeInsight.editorActions.SmaliTypedHandler" id="smali"/>
 
 
-        <psi.referenceContributor language="Smali"
+        <psi.referenceContributor language="smali"
                                   implementation="org.jf.smalidea.codeInsight.completion.SimpleReferenceContributor"/>
 
-        <completion.contributor language="Smali"
+        <completion.contributor language="smali"
                                 implementationClass="org.jf.smalidea.codeInsight.completion.SmaliCompletionContributor"/>
 
-        <completion.contributor language="Smali"
+        <completion.contributor language="smali"
                                 implementationClass="org.jf.smalidea.codeInsight.completion.SmaliClassNameCompletionContributor"/>
 
         <!--smali方法实现搜索器-->
@@ -116,9 +116,9 @@
         <projectService serviceImplementation="org.jf.smalidea.psi.impl.search.SmaliHighlightingCaches"/>
 
 
-        <completion.contributor language="Smali"
+        <completion.contributor language="smali"
                                 implementationClass="org.jf.smalidea.codeInsight.completion.SmaliCompletionContributor"/>
-        <completion.contributor language="Smali"
+        <completion.contributor language="smali"
                                 implementationClass="org.jf.smalidea.codeInsight.completion.SmaliClassNameCompletionContributor"/>
 
         <intentionAction>

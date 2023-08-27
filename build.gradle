@@ -36,7 +36,7 @@ plugins {
 
 apply plugin: 'antlr'
 
-version = '0.06'
+version = '0.07'
 
 def versionSuffix
 try {
@@ -126,6 +126,6 @@ generateGrammarSource {
 generateGrammarSource.dependsOn(extractTokens)
 
 wrapper {
-    gradleVersion = '7.0'
+    gradleVersion = '7.2'
     distributionType = Wrapper.DistributionType.ALL
 }
